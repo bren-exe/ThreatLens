@@ -1,11 +1,10 @@
 import type { ScanRecord } from './types';
 
-// Seed history so the dashboard + history page are populated on first load.
 export const SEED_HISTORY: ScanRecord[] = [
   {
     id: 'seed-1',
     date: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
-    label: 'Bank impersonation',
+    label: 'Bank impersonation email',
     type: 'EMAIL',
     score: 94,
     level: 'HIGH',
@@ -14,7 +13,7 @@ export const SEED_HISTORY: ScanRecord[] = [
   {
     id: 'seed-2',
     date: new Date(Date.now() - 1000 * 60 * 60 * 6).toISOString(),
-    label: 'Prize scam',
+    label: 'UPI prize scam',
     type: 'MESSAGE',
     score: 88,
     level: 'HIGH',
@@ -23,7 +22,7 @@ export const SEED_HISTORY: ScanRecord[] = [
   {
     id: 'seed-3',
     date: new Date(Date.now() - 1000 * 60 * 60 * 26).toISOString(),
-    label: 'Suspicious login',
+    label: 'Suspicious login alert',
     type: 'EMAIL',
     score: 72,
     level: 'MEDIUM',
@@ -32,24 +31,15 @@ export const SEED_HISTORY: ScanRecord[] = [
   {
     id: 'seed-4',
     date: new Date(Date.now() - 1000 * 60 * 60 * 30).toISOString(),
-    label: 'Marketing message',
-    type: 'MESSAGE',
-    score: 18,
-    level: 'LOW',
-    preview: 'Mega sale! Up to 70% off this weekend only. Tap to shop now on our official store.',
+    label: 'Fake courier delivery',
+    type: 'URL',
+    score: 81,
+    level: 'HIGH',
+    preview: 'http://track-parcel-urgent.xyz/verify?ref=IN8842 — your package is on hold. Confirm address.',
   },
   {
     id: 'seed-5',
     date: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(),
-    label: 'Verified notification',
-    type: 'MESSAGE',
-    score: 5,
-    level: 'SAFE',
-    preview: 'Your electricity bill of ₹1,240 is due on 20 August. Pay through the official app.',
-  },
-  {
-    id: 'seed-6',
-    date: new Date(Date.now() - 1000 * 60 * 60 * 52).toISOString(),
     label: 'OTP harvesting',
     type: 'MESSAGE',
     score: 97,
@@ -57,32 +47,30 @@ export const SEED_HISTORY: ScanRecord[] = [
     preview: 'Your account has been selected for verification. Send the OTP to our support representative...',
   },
   {
-    id: 'seed-7',
-    date: new Date(Date.now() - 1000 * 60 * 60 * 70).toISOString(),
-    label: 'Fake delivery link',
-    type: 'URL',
-    score: 81,
+    id: 'seed-6',
+    date: new Date(Date.now() - 1000 * 60 * 60 * 52).toISOString(),
+    label: 'KYC verification scam',
+    type: 'MESSAGE',
+    score: 79,
     level: 'HIGH',
-    preview: 'http://track-parcel-urgent.xyz/verify?ref=IN8842 — your package is on hold. Confirm address.',
+    preview: 'Your KYC is pending. Update your details immediately to avoid account closure. Click here...',
   },
   {
-    id: 'seed-8',
-    date: new Date(Date.now() - 1000 * 60 * 60 * 96).toISOString(),
+    id: 'seed-7',
+    date: new Date(Date.now() - 1000 * 60 * 60 * 70).toISOString(),
     label: 'Investment offer',
     type: 'MESSAGE',
     score: 76,
     level: 'HIGH',
     preview: 'Double your money in 7 days. Guaranteed returns. Invest ₹10,000 today, limited seats.',
   },
-];
-
-// 7-day threat detection trend (detected count per day, oldest first)
-export const SEED_TREND: { day: string; detected: number; scanned: number }[] = [
-  { day: 'Mon', detected: 6, scanned: 14 },
-  { day: 'Tue', detected: 9, scanned: 18 },
-  { day: 'Wed', detected: 4, scanned: 11 },
-  { day: 'Thu', detected: 11, scanned: 22 },
-  { day: 'Fri', detected: 7, scanned: 16 },
-  { day: 'Sat', detected: 13, scanned: 24 },
-  { day: 'Sun', detected: 8, scanned: 22 },
+  {
+    id: 'seed-8',
+    date: new Date(Date.now() - 1000 * 60 * 60 * 96).toISOString(),
+    label: 'Verified notification',
+    type: 'MESSAGE',
+    score: 5,
+    level: 'SAFE',
+    preview: 'Your electricity bill of ₹1,240 is due on 20 August. Pay through the official app.',
+  },
 ];

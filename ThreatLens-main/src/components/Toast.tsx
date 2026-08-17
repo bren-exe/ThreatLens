@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
-import { CheckCircle2, Info, AlertTriangle, XCircle, X } from 'lucide-react';
+import { CircleCheck as CheckCircle2, Info, TriangleAlert as AlertTriangle, Circle as XCircle, X } from 'lucide-react';
 
 type ToastKind = 'success' | 'info' | 'warning' | 'error';
 
@@ -30,10 +30,10 @@ const ICONS: Record<ToastKind, typeof CheckCircle2> = {
 };
 
 const STYLES: Record<ToastKind, string> = {
-  success: 'border-emerald-500/30 text-emerald-300',
-  info: 'border-cyber-cyan/30 text-cyber-cyan',
-  warning: 'border-amber-500/30 text-amber-300',
-  error: 'border-red-500/30 text-red-300',
+  success: 'border-safe/30 text-safe',
+  info: 'border-brand/30 text-brand',
+  warning: 'border-warning/30 text-warning',
+  error: 'border-critical/30 text-critical',
 };
 
 export function ToastProvider({ children }: { children: ReactNode }) {
@@ -47,7 +47,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     (kind: ToastKind, title: string, message?: string) => {
       const id = Math.random().toString(36).slice(2);
       setToasts((t) => [...t, { id, kind, title, message }]);
-      window.setTimeout(() => remove(id), 4200);
+      window.setTimeout(() => remove(id), 4000);
     },
     [remove],
   );
@@ -63,7 +63,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
           return (
             <div
               key={t.id}
-              className={`pointer-events-auto glass-card flex items-start gap-3 p-3.5 pr-2 animate-slide-up ${STYLES[t.kind]}`}
+              className={`pointer-events-auto surface-2 flex items-start gap-3 rounded-lg p-3.5 pr-2 animate-slide-down ${STYLES[t.kind]}`}
             >
               <Icon className="mt-0.5 h-5 w-5 shrink-0" />
               <div className="min-w-0 flex-1">

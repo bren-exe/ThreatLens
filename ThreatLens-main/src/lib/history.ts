@@ -1,6 +1,6 @@
 import type { ScanRecord } from './types';
 
-const KEY = 'cybershield.history.v1';
+const KEY = 'threatlens.history.v1';
 
 export function loadHistory(): ScanRecord[] {
   try {

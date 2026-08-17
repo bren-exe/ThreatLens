@@ -1,11 +1,10 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
+import type { ScanType } from '@/lib/types';
 
 interface DemoContextValue {
-  /** when true, scanner should run the scripted demo automatically */
   demoActive: boolean;
-  /** payload to auto-load into the scanner when demo launches */
-  demoPayload: { text: string; type: 'MESSAGE' | 'EMAIL' | 'URL' } | null;
-  launchDemo: (text: string, type: 'MESSAGE' | 'EMAIL' | 'URL') => void;
+  demoPayload: { text: string; type: ScanType } | null;
+  launchDemo: (text: string, type: ScanType) => void;
   endDemo: () => void;
 }
 
@@ -19,9 +18,9 @@ export function useDemo(): DemoContextValue {
 
 export function DemoProvider({ children }: { children: ReactNode }) {
   const [demoActive, setDemoActive] = useState(false);
-  const [demoPayload, setDemoPayload] = useState<{ text: string; type: 'MESSAGE' | 'EMAIL' | 'URL' } | null>(null);
+  const [demoPayload, setDemoPayload] = useState<{ text: string; type: ScanType } | null>(null);
 
-  const launchDemo = useCallback((text: string, type: 'MESSAGE' | 'EMAIL' | 'URL') => {
+  const launchDemo = useCallback((text: string, type: ScanType) => {
     setDemoPayload({ text, type });
     setDemoActive(true);
   }, []);

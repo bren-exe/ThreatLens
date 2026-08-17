@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import type { ScanRecord } from '@/lib/types';
-import { addScanRecord, clearHistory, deleteRecord, loadHistory, saveHistory } from '@/lib/history';
+import { clearHistory, deleteRecord, loadHistory, saveHistory } from '@/lib/history';
 import { SEED_HISTORY } from '@/lib/seedData';
 import { useToast } from '@/components/Toast';
 
@@ -55,6 +55,3 @@ export function HistoryProvider({ children }: { children: ReactNode }) {
 
   return <HistoryContext.Provider value={value}>{children}</HistoryContext.Provider>;
 }
-
-// re-export for convenience to avoid circular imports in components that already import history
-export { addScanRecord };

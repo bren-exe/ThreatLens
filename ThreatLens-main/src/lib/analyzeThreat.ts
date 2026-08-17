@@ -82,7 +82,7 @@ const RULES: Rule[] = [
     categories: ['financial'],
     recs: [
       { id: 'no-pay', text: 'Do not make any payment to claim a prize, offer, or unlock an account.' },
-      { id: 'verify-pay', text: 'Verify the request through the organization’s official website or app.' },
+      { id: 'verify-pay', text: 'Verify the request through the organization\u2019s official website or app.' },
     ],
     test: (_t, l) =>
       /\b(processing fee|registration fee|payment|pay (?:now|immediately|rs|₹)|transfer (?:funds|money)|deposit|wire|send (?:money|₹|rs)|clearance fee|customs fee|fee of)\b/i.test(l),
@@ -96,7 +96,7 @@ const RULES: Rule[] = [
     categories: ['financial', 'social-engineering'],
     recs: [
       { id: 'no-prize', text: 'You cannot win a lottery or contest you never entered — it is a scam.' },
-      { id: 'block-prize', text: 'Block and report the sender; do not pay any “fee” to claim a prize.' },
+      { id: 'block-prize', text: 'Block and report the sender; do not pay any \u201cfee\u201d to claim a prize.' },
     ],
     test: (_t, l) =>
       /\b(you(?:'ve| have) won|congratulations|winner|lottery|lucky draw|prize|reward|jackpot|selected for|you are chosen|gift card|free gift)\b/i.test(l),
@@ -124,7 +124,7 @@ const RULES: Rule[] = [
     categories: ['social-engineering'],
     recs: [
       { id: 'verify-suspend', text: 'Log in to the official app or website to check your real account status.' },
-      { id: 'no-suspend-link', text: 'Do not use the link in the message to “restore” your account.' },
+      { id: 'no-suspend-link', text: 'Do not use the link in the message to \u201crestore\u201d your account.' },
     ],
     test: (_t, l) =>
       /\b(suspend|deactivat|terminat|block(?:ed)?|disable|lock(?:ed)?|close your account|restrict|freeze|limited access|lose access|account will be)\b/i.test(l),
@@ -137,7 +137,7 @@ const RULES: Rule[] = [
     weight: 20,
     categories: ['social-engineering'],
     recs: [
-      { id: 'verify-impersonation', text: 'Verify the sender through the organization’s official website or app.' },
+      { id: 'verify-impersonation', text: 'Verify the sender through the organization\u2019s official website or app.' },
       { id: 'report-impersonation', text: 'Report impersonation to the real organization and block the sender.' },
     ],
     test: (_t, l) =>
@@ -154,11 +154,7 @@ const RULES: Rule[] = [
       { id: 'no-click', text: 'Do not click the link. Hover or inspect the full URL first.' },
       { id: 'type-url', text: 'If needed, type the official website address directly into your browser.' },
     ],
-    test: (t, l) => {
-      if (!ANY_URL.test(t)) return false;
-      // any URL in a message adds some risk; refined by other URL rules
-      return true;
-    },
+    test: (t) => ANY_URL.test(t),
   },
   {
     id: 'http-url',
@@ -249,7 +245,7 @@ const RULES: Rule[] = [
     weight: 18,
     categories: ['social-engineering', 'credential'],
     recs: [
-      { id: 'no-support-verify', text: 'Real support will never ask you to “verify” by sending codes or details.' },
+      { id: 'no-support-verify', text: 'Real support will never ask you to \u201cverify\u201d by sending codes or details.' },
       { id: 'contact-official', text: 'Reach support only through the official app or verified helpline.' },
     ],
     test: (_t, l) =>
@@ -296,7 +292,6 @@ function buildBreakdown(hits: RuleHit[]): RiskBreakdown {
     const matched = hits.filter((h) => h.categories.includes(cat));
     if (matched.length === 0) return 0;
     const raw = matched.reduce((acc, h) => acc + h.indicator.weight, 0);
-    // scale: a single medium hit ~ 55, multiple high hits approach 100
     return clamp(Math.round(raw * 1.15 + 8));
   };
   return {
@@ -351,9 +346,7 @@ export function analyzeThreat(input: string, type: ScanType = 'MESSAGE'): Threat
     }
   }
 
-  // Weighted score: sum weights, dampen slightly so many low signals don't max out falsely
   const raw = hits.reduce((acc, h) => acc + h.indicator.weight, 0);
-  // diminishing returns after 80
   let score = raw;
   if (raw > 80) score = 80 + (raw - 80) * 0.55;
   score = clamp(Math.round(score));
@@ -362,7 +355,6 @@ export function analyzeThreat(input: string, type: ScanType = 'MESSAGE'): Threat
   const categories = Array.from(new Set(hits.flatMap((h) => h.categories)));
   const recommendations = dedupeRecs(hits.flatMap((h) => h.recs));
 
-  // Always include a baseline safe-action when there is any risk
   if (recommendations.length === 0 && level !== 'SAFE') {
     recommendations.push({ id: 'verify', text: 'Verify through official channels before taking any action.' });
   }
@@ -378,25 +370,115 @@ export function analyzeThreat(input: string, type: ScanType = 'MESSAGE'): Threat
   };
 }
 
+/** Analyze a phone number for suspicious patterns. */
+export function analyzePhone(input: string): ThreatAnalysis {
+  const text = input.trim();
+  if (!text) {
+    return {
+      score: 0,
+      level: 'SAFE',
+      indicators: [],
+      breakdown: { socialEngineering: 0, urlRisk: 0, credentialRisk: 0, financialRisk: 0 },
+      explanation: 'No phone number was provided to analyze.',
+      recommendations: [],
+      detectedCategories: [],
+    };
+  }
+
+  // Phone numbers alone cannot be definitively classified as fraudulent.
+  // We provide a conservative assessment based on available patterns.
+  const indicators: Indicator[] = [];
+  const recs: Recommendation[] = [];
+  const categories: string[] = [];
+
+  const isInternational = /^\+/.test(text);
+  const digits = text.replace(/\D/g, '');
+
+  if (isInternational && !text.startsWith('+91')) {
+    indicators.push({
+      id: 'intl-number',
+      label: 'International Number',
+      severity: 'MEDIUM',
+      detail: 'This is an international phone number. Verify the country code and the caller\u2019s identity before responding.',
+      weight: 25,
+    });
+    categories.push('social-engineering');
+    recs.push({ id: 'verify-intl', text: 'Be cautious with international calls. Verify the caller through official channels.' });
+  }
+
+  if (digits.length > 0 && digits.length < 6) {
+    indicators.push({
+      id: 'short-number',
+      label: 'Unusually Short Number',
+      severity: 'LOW',
+      detail: 'This number is unusually short, which can indicate a spoofed or virtual number.',
+      weight: 12,
+    });
+    categories.push('social-engineering');
+  }
+
+  if (indicators.length === 0) {
+    recs.push({ id: 'phone-unknown', text: 'ThreatLens cannot determine the reputation of an unknown number. Do not share personal information with unknown callers.' });
+  }
+
+  const raw = indicators.reduce((acc, i) => acc + i.weight, 0);
+  const score = clamp(Math.round(raw));
+  const level = levelFromScore(score);
+
+  return {
+    score,
+    level,
+    indicators,
+    breakdown: { socialEngineering: score, urlRisk: 0, credentialRisk: 0, financialRisk: 0 },
+    explanation:
+      indicators.length === 0
+        ? 'No suspicious patterns were detected in this phone number. However, an unknown number cannot be guaranteed safe — never share personal or financial information with unverified callers.'
+        : 'Some patterns in this phone number warrant caution. Phone number reputation is limited; always verify the caller through official channels.',
+    recommendations: recs,
+    detectedCategories: categories,
+  };
+}
+
+export interface BatchResult {
+  url: string;
+  analysis: ThreatAnalysis;
+}
+
+/** Analyze multiple URLs at once. */
+export function analyzeBatch(urls: string[]): BatchResult[] {
+  return urls
+    .map((u) => u.trim())
+    .filter((u) => u.length > 0)
+    .map((url) => ({
+      url,
+      analysis: analyzeThreat(url, 'URL'),
+    }));
+}
+
 export const DEMO_EXAMPLES: Record<string, { type: ScanType; text: string; label: string }> = {
   phishing: {
-    type: 'MESSAGE',
-    label: 'Phishing Example',
-    text: 'URGENT: Your bank account will be suspended today. Verify your account immediately to avoid losing access. Click here: http://secure-bank-verification.example.com/login',
+    type: 'URL',
+    label: 'Phishing Link',
+    text: 'http://secure-bank-verification.xyz/login?account=verify&urgent=true',
   },
-  scam: {
+  upi: {
     type: 'MESSAGE',
-    label: 'Scam Example',
-    text: 'Congratulations! You have won ₹50,00,000 in our lucky draw. Pay ₹2,999 processing fee immediately to claim your prize. Send your details to receive the reward.',
+    label: 'UPI Scam',
+    text: 'Congratulations! You have won ₹50,00,000 in our lucky draw. Pay ₹2,999 processing fee immediately to claim your prize. Send your UPI ID and OTP to receive the reward.',
+  },
+  kyc: {
+    type: 'MESSAGE',
+    label: 'KYC Scam',
+    text: 'URGENT: Your KYC verification is pending. Your account will be suspended today. Update your Aadhaar and PAN details immediately by clicking this link: http://kyc-update-verify.click/submit',
+  },
+  delivery: {
+    type: 'URL',
+    label: 'Delivery Scam',
+    text: 'http://track-parcel-urgent.xyz/verify?ref=IN8842 — your package is on hold. Confirm your address and pay ₹49 delivery charge.',
   },
   safe: {
-    type: 'MESSAGE',
-    label: 'Safe Example',
-    text: 'Your electricity bill of ₹1,240 is due on 20 August. Please make your payment through the official electricity provider application.',
-  },
-  otp: {
-    type: 'MESSAGE',
-    label: 'Suspicious OTP Example',
-    text: 'Your account has been selected for verification. Please send the OTP received on your phone to our support representative to prevent account suspension.',
+    type: 'URL',
+    label: 'Safe Link',
+    text: 'https://www.amazon.in/gp/css/order-history?ref=oh_aui_ajax_orders',
   },
 };

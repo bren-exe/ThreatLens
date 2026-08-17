@@ -2,7 +2,7 @@ export type RiskLevel = 'SAFE' | 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
 
 export type IndicatorSeverity = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
 
-export type ScanType = 'MESSAGE' | 'EMAIL' | 'URL';
+export type ScanType = 'URL' | 'MESSAGE' | 'EMAIL' | 'SCREENSHOT' | 'QR' | 'PHONE';
 
 export interface Indicator {
   id: string;

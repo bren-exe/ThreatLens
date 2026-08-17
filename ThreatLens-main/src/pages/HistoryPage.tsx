@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { History, Trash2, Search, Inbox } from 'lucide-react';
+import { Factory as History, Trash2, Search, Inbox } from 'lucide-react';
 import { useHistory } from '@/components/HistoryProvider';
 import { RiskBadge } from '@/components/RiskBadge';
 import { LEVEL_COLORS } from '@/lib/theme';
@@ -10,7 +10,7 @@ type Filter = 'ALL' | RiskLevel;
 
 const FILTERS: Filter[] = ['ALL', 'SAFE', 'LOW', 'MEDIUM', 'HIGH', 'CRITICAL'];
 
-function fmtDate(iso: string): string {
+function fmtTime(iso: string): string {
   const d = new Date(iso);
   return d.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
@@ -36,14 +36,15 @@ export function HistoryPage() {
   }, [records]);
 
   return (
-    <div className="space-y-6">
-      <div className="glass-card flex flex-col gap-3 p-6 sm:flex-row sm:items-center sm:justify-between">
+    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
+      {/* Header */}
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2.5">
-          <div className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-cyber-blue to-cyber-accent shadow-glow-accent">
+          <div className="grid h-10 w-10 place-items-center rounded-lg bg-brand">
             <History className="h-5 w-5 text-white" />
           </div>
           <div>
-            <h1 className="font-display text-2xl font-bold text-white">Threat History</h1>
+            <h1 className="font-display text-xl font-bold text-white">Scan History</h1>
             <p className="text-sm text-slate-400">All scans are saved locally on this device.</p>
           </div>
         </div>
@@ -61,7 +62,7 @@ export function HistoryPage() {
       </div>
 
       {/* Filters */}
-      <div className="glass-card p-4">
+      <div className="surface rounded-xl p-4 mb-5">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap gap-2">
             {FILTERS.map((f) => (
@@ -69,11 +70,11 @@ export function HistoryPage() {
                 key={f}
                 onClick={() => setFilter(f)}
                 className={`chip px-3 py-1.5 text-xs font-semibold transition ${
-                  filter === f ? 'bg-gradient-to-r from-cyber-blue to-cyber-cyan text-white shadow-glow-cyan' : 'bg-white/5 text-slate-400 hover:text-white'
+                  filter === f ? 'bg-brand text-white' : 'bg-ink-800 text-slate-400 border border-ink-600 hover:text-white'
                 }`}
               >
                 {f === 'ALL' ? 'All' : f.charAt(0) + f.slice(1).toLowerCase()}
-                <span className="ml-1 rounded-full bg-black/20 px-1.5 text-[10px]">{counts[f]}</span>
+                <span className="ml-1 rounded bg-black/20 px-1 text-[10px]">{counts[f]}</span>
               </button>
             ))}
           </div>
@@ -83,32 +84,34 @@ export function HistoryPage() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search scans..."
-              className="w-full rounded-xl border border-white/10 bg-ink-700/60 py-2 pl-9 pr-3 text-sm text-slate-200 placeholder:text-slate-500 focus:border-cyber-cyan/60 focus:outline-none focus:ring-2 focus:ring-cyber-cyan/20"
+              className="input pl-9 py-2"
+              aria-label="Search scan history"
             />
           </div>
         </div>
       </div>
 
-      {/* List */}
+      {/* Table */}
       {filtered.length === 0 ? (
-        <div className="glass-card flex flex-col items-center justify-center gap-3 p-12 text-center">
-          <div className="grid h-14 w-14 place-items-center rounded-2xl bg-white/5">
+        <div className="surface rounded-xl flex flex-col items-center justify-center gap-3 p-12 text-center">
+          <div className="grid h-14 w-14 place-items-center rounded-xl bg-ink-800">
             <Inbox className="h-7 w-7 text-slate-500" />
           </div>
           <p className="text-sm text-slate-400">No scans match this filter.</p>
           <p className="max-w-sm text-xs text-slate-600">Run a scan from the Threat Scanner and it will appear here automatically.</p>
         </div>
       ) : (
-        <div className="glass-card overflow-hidden">
+        <div className="surface rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[680px] text-left text-sm">
               <thead>
-                <tr className="border-b border-white/5 text-xs uppercase tracking-wider text-slate-500">
-                  <th className="px-4 py-3 font-medium">Date</th>
-                  <th className="px-4 py-3 font-medium">Threat</th>
+                <tr className="border-b border-ink-600 text-xs uppercase tracking-wider text-slate-500">
+                  <th className="px-4 py-3 font-medium">Time</th>
                   <th className="px-4 py-3 font-medium">Type</th>
-                  <th className="px-4 py-3 font-medium">Risk Score</th>
-                  <th className="px-4 py-3 font-medium">Status</th>
+                  <th className="px-4 py-3 font-medium">Threat</th>
+                  <th className="px-4 py-3 font-medium">Category</th>
+                  <th className="px-4 py-3 font-medium">Risk</th>
+                  <th className="px-4 py-3 font-medium">Score</th>
                   <th className="px-4 py-3 font-medium text-right">Actions</th>
                 </tr>
               </thead>
@@ -116,29 +119,30 @@ export function HistoryPage() {
                 {filtered.map((r) => {
                   const colors = LEVEL_COLORS[r.level];
                   return (
-                    <tr key={r.id} className="border-b border-white/5 transition hover:bg-white/5">
-                      <td className="whitespace-nowrap px-4 py-3 text-xs text-slate-400">{fmtDate(r.date)}</td>
+                    <tr key={r.id} className="border-b border-ink-600 transition hover:bg-ink-800/50">
+                      <td className="whitespace-nowrap px-4 py-3 text-xs text-slate-400">{fmtTime(r.date)}</td>
+                      <td className="px-4 py-3"><span className="chip bg-ink-800 text-slate-300 border border-ink-600">{r.type}</span></td>
                       <td className="px-4 py-3">
                         <div className="font-medium text-slate-200">{r.label}</div>
                         <div className="mt-0.5 max-w-xs truncate text-xs text-slate-500">{r.preview}</div>
                       </td>
-                      <td className="px-4 py-3"><span className="chip bg-white/5 text-slate-300">{r.type}</span></td>
+                      <td className="px-4 py-3 text-xs text-slate-400">—</td>
+                      <td className="px-4 py-3"><RiskBadge level={r.level} size="sm" /></td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
-                          <div className="h-1.5 w-16 overflow-hidden rounded-full bg-white/5">
+                          <div className="h-1.5 w-14 overflow-hidden rounded-full bg-ink-700">
                             <div className="h-full rounded-full" style={{ width: `${r.score}%`, backgroundColor: colors.hex }} />
                           </div>
                           <span className="tabular-nums text-slate-300">{r.score}</span>
                         </div>
                       </td>
-                      <td className="px-4 py-3"><RiskBadge level={r.level} size="sm" /></td>
                       <td className="px-4 py-3 text-right">
                         <button
                           onClick={() => {
                             remove(r.id);
                             push('info', 'Scan removed');
                           }}
-                          className="rounded-lg p-1.5 text-slate-500 transition hover:bg-red-500/10 hover:text-red-300"
+                          className="rounded-lg p-1.5 text-slate-500 transition hover:bg-critical/10 hover:text-critical"
                           aria-label="Delete scan record"
                         >
                           <Trash2 className="h-4 w-4" />

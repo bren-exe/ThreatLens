@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
 
-export type Route = 'dashboard' | 'scanner' | 'history' | 'safety' | 'about';
+export type Route = 'home' | 'scanner' | 'tools' | 'history' | 'safety' | 'learn' | 'about';
 
 interface RouterContextValue {
   route: Route;
@@ -16,13 +16,12 @@ export function useRouter(): RouterContextValue {
 }
 
 export function RouterProvider({ children }: { children: ReactNode }) {
-  const [route, setRoute] = useState<Route>('dashboard');
+  const [route, setRoute] = useState<Route>('home');
 
   const navigate = useCallback((r: Route) => {
     setRoute(r);
-    // scroll main content to top on navigation
     requestAnimationFrame(() => {
-      document.getElementById('main-scroll')?.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   }, []);
 
