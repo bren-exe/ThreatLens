@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-ink-950 text-slate-200 font-sans antialiased;
+  }
+  ::selection {
+    background: rgba(59, 130, 246, 0.3);
+    color: #F1F5F9;
+  }
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #242C36 transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: #242C36;
+    border-radius: 999px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+@layer components {
+  .surface {
+    @apply bg-ink-900 border border-ink-600;
+  }
+  .surface-2 {
+    @apply bg-ink-800 border border-ink-600;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-all duration-150 select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-primary {
+    @apply btn px-5 py-2.5 text-sm text-white bg-brand hover:bg-brand-dark shadow-btn;
+  }
+  .btn-ghost {
+    @apply btn px-4 py-2.5 text-sm text-slate-300 bg-ink-800 border border-ink-600 hover:bg-ink-700 hover:text-white;
+  }
+  .btn-outline {
+    @apply btn px-4 py-2.5 text-sm text-brand border border-brand/40 hover:bg-brand/10;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium;
+  }
+  .input {
+    @apply w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-brand/60 focus:ring-2 focus:ring-brand/15 transition;
+  }
+  .textarea {
+    @apply w-full resize-none rounded-lg bg-ink-800 border border-ink-600 p-4 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-brand/60 focus:ring-2 focus:ring-brand/15 transition;
+  }
+  .label {
+    @apply text-xs font-medium uppercase tracking-wider text-slate-500;
+  }
+  .section-eyebrow {
+    @apply text-xs font-semibold uppercase tracking-widest text-brand;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-brand-light to-brand;
+  }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+}
