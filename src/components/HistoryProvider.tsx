@@ -42,7 +42,7 @@ export function HistoryProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const remove = useCallback((id: string) => {
-    setRecords((prev) => deleteRecord(id));
+    setRecords(deleteRecord(id));
   }, []);
 
   const clear = useCallback(() => {

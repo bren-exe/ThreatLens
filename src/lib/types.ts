@@ -42,4 +42,5 @@ export interface ScanRecord {
   score: number;
   level: RiskLevel;
   preview: string;
+  categories?: string[];
 }

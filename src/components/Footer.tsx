@@ -6,6 +6,7 @@ const LINKS: { label: string; route: Route }[] = [
   { label: 'Tools', route: 'tools' },
   { label: 'History', route: 'history' },
   { label: 'Safety', route: 'safety' },
+  { label: 'Learn', route: 'learn' },
   { label: 'About', route: 'about' },
 ];
 

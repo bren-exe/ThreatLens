@@ -74,6 +74,7 @@ export function Scanner() {
         score: analysis.score,
         level: analysis.level,
         preview: demoPayload.text.slice(0, 80),
+        categories: analysis.detectedCategories,
       });
       endDemo();
     }, SCAN_DURATION);
@@ -102,6 +103,7 @@ export function Scanner() {
         score: analysis.score,
         level: analysis.level,
         preview: input.slice(0, 80),
+        categories: analysis.detectedCategories,
       });
       push(
         analysis.level === 'SAFE' ? 'success' : analysis.level === 'LOW' ? 'info' : 'warning',

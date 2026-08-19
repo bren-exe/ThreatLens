@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { TriangleAlert as AlertTriangle, ShieldCheck, ChevronDown, ChevronUp, Brain, ShieldX, KeyRound, Link2, Clock, Drama, Wallet, Sparkles, Globe, Phone } from 'lucide-react';
+import { TriangleAlert as AlertTriangle, ShieldCheck, ChevronDown, ChevronUp, Brain, ShieldX, KeyRound, Link2, Clock, Drama, Wallet, Sparkles, Phone } from 'lucide-react';
 import type { Indicator, IndicatorSeverity, ScanType, ThreatAnalysis } from '@/lib/types';
 import { RiskMeter } from '@/components/RiskMeter';
 import { LEVEL_COLORS, SEVERITY_COLORS } from '@/lib/theme';

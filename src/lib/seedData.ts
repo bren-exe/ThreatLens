@@ -9,6 +9,7 @@ export const SEED_HISTORY: ScanRecord[] = [
     score: 94,
     level: 'HIGH',
     preview: 'URGENT: Your bank account will be suspended today. Verify your account immediately...',
+    categories: ['social-engineering', 'credential'],
   },
   {
     id: 'seed-2',
@@ -18,6 +19,7 @@ export const SEED_HISTORY: ScanRecord[] = [
     score: 88,
     level: 'HIGH',
     preview: 'Congratulations! You have won ₹50,00,000 in our lucky draw. Pay ₹2,999 processing fee...',
+    categories: ['financial', 'social-engineering'],
   },
   {
     id: 'seed-3',
@@ -27,6 +29,7 @@ export const SEED_HISTORY: ScanRecord[] = [
     score: 72,
     level: 'MEDIUM',
     preview: 'We detected a suspicious login attempt. Verify it was you by clicking this link...',
+    categories: ['social-engineering', 'url'],
   },
   {
     id: 'seed-4',
@@ -36,6 +39,7 @@ export const SEED_HISTORY: ScanRecord[] = [
     score: 81,
     level: 'HIGH',
     preview: 'http://track-parcel-urgent.xyz/verify?ref=IN8842 — your package is on hold. Confirm address.',
+    categories: ['url', 'financial'],
   },
   {
     id: 'seed-5',
@@ -45,6 +49,7 @@ export const SEED_HISTORY: ScanRecord[] = [
     score: 97,
     level: 'CRITICAL',
     preview: 'Your account has been selected for verification. Send the OTP to our support representative...',
+    categories: ['credential', 'social-engineering'],
   },
   {
     id: 'seed-6',
@@ -54,6 +59,7 @@ export const SEED_HISTORY: ScanRecord[] = [
     score: 79,
     level: 'HIGH',
     preview: 'Your KYC is pending. Update your details immediately to avoid account closure. Click here...',
+    categories: ['social-engineering', 'credential'],
   },
   {
     id: 'seed-7',
@@ -63,6 +69,7 @@ export const SEED_HISTORY: ScanRecord[] = [
     score: 76,
     level: 'HIGH',
     preview: 'Double your money in 7 days. Guaranteed returns. Invest ₹10,000 today, limited seats.',
+    categories: ['financial', 'social-engineering'],
   },
   {
     id: 'seed-8',
@@ -72,5 +79,6 @@ export const SEED_HISTORY: ScanRecord[] = [
     score: 5,
     level: 'SAFE',
     preview: 'Your electricity bill of ₹1,240 is due on 20 August. Pay through the official app.',
+    categories: [],
   },
 ];
